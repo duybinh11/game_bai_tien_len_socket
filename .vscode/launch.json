@@ -6,16 +6,24 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Current File",
+            "name": "DatabaseConnection",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "Database.DatabaseConnection",
+            "projectName": "tien_len_v2_2f3af84"
+        },
+        {
+            "type": "java",
+            "name": "Test",
+            "request": "launch",
+            "mainClass": "Test",
+            "projectName": "tien_len_v2_2f3af84"
         },
         {
             "type": "java",
             "name": "Client",
             "request": "launch",
             "mainClass": "Client.Client",
-            "projectName": "tien_len_v2_3e947edd",
+            "projectName": "tien_len_v2_2f3af84",
             "vmArgs": "--module-path \"D:/lib/javafx-sdk-22.0.2/lib\" --add-modules javafx.controls,javafx.fxml"
         },
         {
@@ -23,16 +31,17 @@
             "name": "Server",
             "request": "launch",
             "mainClass": "Server.Server",
-            "projectName": "tien_len_v2_3e947edd",
+            "projectName": "tien_len_v2_2f3af84",
             "vmArgs": "--module-path \"D:/lib/javafx-sdk-22.0.2/lib\" --add-modules javafx.controls,javafx.fxml"
         },
         {
-            "type": "java",
-            "name": "Test",
+            "type": "node",
             "request": "launch",
-            "mainClass": "Test",
-            "projectName": "tien_len_v2_3e947edd",
-            "vmArgs": "--module-path \"D:/lib/javafx-sdk-22.0.2/lib\" --add-modules javafx.controls,javafx.fxml"
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${file}"
         }
     ]
 }

@@ -39,7 +39,6 @@ public class Server extends Application {
                     ClientHandle clientHandle = new ClientHandle(client);
                     System.out.println("co 1 client moi da ket noi toi info : " + client);
                     clientHandle.start();
-                    addClients(clientHandle);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -66,11 +65,15 @@ public class Server extends Application {
 
     }
 
+    public static void removeRoom(Room room) {
+        rooms.removeIf(r -> r.equals(room));
+    }
+
     public static Room getRoomById(int id) {
         return rooms.stream().filter(room -> room.getId() == id).findFirst().orElse(null);
     }
 
-    public static void broadCastAllClients(ClientHandle player, ActionBroadcast actionBroadcast) {
+    public static void broadCastAllClients(ActionBroadcast actionBroadcast) {
         clients.forEach(client -> {
             try {
                 client.getWriteObject().writeObject(actionBroadcast);
@@ -80,10 +83,23 @@ public class Server extends Application {
         });
     }
 
-    private void addClients(ClientHandle clientHandle) {
+    public static void addClients(ClientHandle clientHandle) {
         Platform.runLater(() -> {
             clients.add(clientHandle);
             controller.updateListClient(clientHandle);
+        });
+    }
+
+    public static void refreshDataServer() {
+        Platform.runLater(() -> {
+            controller.refreshTable(clients, rooms);
+        });
+    }
+
+    public static void removeClient(ClientHandle clientHandle) {
+        clients.removeIf(item -> item.equals(clientHandle));
+        Platform.runLater(() -> {
+            controller.refreshTable(clients, rooms);
         });
     }
 

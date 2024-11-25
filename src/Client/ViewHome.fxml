@@ -6,20 +6,23 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
 
 <!-- fx:controller ="Client.ClientController" -->
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="541.0" prefWidth="694.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
+<AnchorPane fx:id="txtUsername" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="541.0" prefWidth="694.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
    <children>
-      <Label layoutX="32.0" layoutY="18.0" text="Tên phòng" />
-      <TextField fx:id="tfNameRoom" layoutX="98.0" layoutY="14.0" prefHeight="26.0" prefWidth="494.0" />
-      <TableView fx:id="tableRooms" layoutX="32.0" layoutY="57.0" prefHeight="406.0" prefWidth="640.0">
+      <Label layoutX="27.0" layoutY="58.0" text="Tên phòng" />
+      <TextField fx:id="tfNameRoom" layoutX="93.0" layoutY="54.0" prefHeight="26.0" prefWidth="494.0" />
+      <TableView fx:id="tableRooms" layoutX="27.0" layoutY="97.0" prefHeight="406.0" prefWidth="640.0">
         <columns>
           <TableColumn fx:id="columnId" prefWidth="75.0" text="id" />
           <TableColumn fx:id="columnName" prefWidth="428.7999725341797" text="name" />
             <TableColumn fx:id="columnMenber" prefWidth="135.199951171875" text="số người chơi" />
         </columns>
       </TableView>
-      <Button fx:id="btnCreate" layoutX="605.0" layoutY="14.0" mnemonicParsing="false" onAction="#btnCreate" text="Button" />
+      <Button fx:id="btnCreate" layoutX="600.0" layoutY="54.0" mnemonicParsing="false" onAction="#btnCreate" text="Button" />
+      <Label layoutX="27.0" layoutY="22.0" text="Xin chào :" />
+      <Text fx:id="txtName" layoutX="85.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
    </children>
 </AnchorPane>

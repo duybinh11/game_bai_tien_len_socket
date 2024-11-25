@@ -4,6 +4,7 @@ import java.util.List;
 
 import DTO.RoomDTO;
 import Model.Card;
+import Model.User;
 
 public interface ClickClientEvent {
     public void clickCreateRoom(String name);
@@ -18,4 +19,11 @@ public interface ClickClientEvent {
 
     public void clickSkip();
 
+    public void clickLogin(User user);
+
+    public void nextViewCreate();
+
+    public void clickCreateAccount(User user);
+
+    public void clickBackToLogin();
 }

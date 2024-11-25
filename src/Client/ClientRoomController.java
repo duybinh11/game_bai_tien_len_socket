@@ -134,22 +134,42 @@ public class ClientRoomController {
 
     public void setPostion1(ClientData c) {
         txtPosition1.setText("" + c.getPostion());
-        txtPort1.setText("" + c.getPort());
+        txtPort1.setText("" + c.getUser().getUsername());
+    }
+
+    public void setPostion2Empty() {
+        txtPosition2.setText("");
+        txtPort2.setText("");
+    }
+
+    public void setPostion3Empty() {
+        txtPosition3.setText("");
+        txtPort3.setText("");
+    }
+
+    public void setPostion4Empty() {
+        txtPosition4.setText("");
+        txtPort4.setText("");
+    }
+
+    public void setPostion1Empty() {
+        txtPosition1.setText("");
+        txtPort1.setText("");
     }
 
     public void setPostion2(ClientData c) {
         txtPosition2.setText("" + c.getPostion());
-        txtPort2.setText("" + c.getPort());
+        txtPort2.setText("" + c.getUser().getUsername());
     }
 
     public void setPostion3(ClientData c) {
         txtPosition3.setText("" + c.getPostion());
-        txtPort3.setText("" + c.getPort());
+        txtPort3.setText("" + c.getUser().getUsername());
     }
 
     public void setPostion4(ClientData c) {
         txtPosition4.setText("" + c.getPostion());
-        txtPort4.setText("" + c.getPort());
+        txtPort4.setText("" + c.getUser().getUsername());
     }
 
     void visibleBtnStart() {

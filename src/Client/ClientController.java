@@ -15,9 +15,11 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.lang.classfile.Label;
 import java.util.*;
 
 import DTO.RoomDTO;
@@ -32,6 +34,9 @@ public class ClientController {
 
     @FXML
     private TextField tfNameRoom;
+
+    @FXML
+    private Text txtName;
 
     @FXML
     private TableColumn<RoomDTO, Integer> columnId;
@@ -92,6 +97,10 @@ public class ClientController {
             });
             return row;
         });
+    }
+
+    public void setUsername(String username) {
+        txtName.setText(username);
     }
 
 }

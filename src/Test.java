@@ -7,13 +7,7 @@ import Model.Card;
 
 public class Test {
     public static void main(String[] args) {
-        List<Card> cards = Arrays.asList(
-                new Card(Rank.BOI, Suit.BICH),
-                new Card(Rank.GIA, Suit.CHUONG),
-                new Card(Rank.HAI, Suit.BICH));
 
-        Card cardMax = getCardMax(cards);
-        System.out.println("Card mạnh nhất là: " + cardMax);
     }
 
     public static Card getCardMax(List<Card> cards) {

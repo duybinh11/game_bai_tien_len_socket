@@ -2,6 +2,8 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
@@ -9,25 +11,32 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientRoomController">
    <children>
-      <Label layoutX="288.0" layoutY="474.0" text="Vị trí : " />
-      <Label fx:id="txtPosition1" layoutX="332.0" layoutY="474.0" text="null" />
-      <Label layoutX="449.0" layoutY="474.0" text="Port : " />
-      <Label fx:id="txtPort1" layoutX="496.0" layoutY="474.0" text="null" />
-      <Label layoutX="288.0" layoutY="68.0" text="Vị trí : " AnchorPane.topAnchor="20.0" />
-      <Label fx:id="txtPosition2" layoutX="1033.0" layoutY="131.0" text="null" AnchorPane.rightAnchor="20.0" />
-      <Label layoutX="449.0" layoutY="68.0" text="Port" AnchorPane.topAnchor="20.0" />
-      <Label fx:id="txtPort2" layoutX="1025.0" layoutY="356.0" text="null" AnchorPane.rightAnchor="20.0" />
-      <Label layoutX="34.0" layoutY="113.0" text="Vị trí : " AnchorPane.leftAnchor="20.0" />
-      <Label fx:id="txtPosition4" layoutX="78.0" layoutY="113.0" text="null" AnchorPane.leftAnchor="60.0" />
-      <Label layoutX="27.0" layoutY="338.0" text="Port" AnchorPane.leftAnchor="20.0" />
-      <Label fx:id="txtPort4" layoutX="74.0" layoutY="338.0" text="null" AnchorPane.leftAnchor="60.0" />
-      <Label layoutX="999.0" layoutY="131.0" text="Vị trí : " AnchorPane.rightAnchor="50.0" />
-      <Label fx:id="txtPosition3" layoutX="332.0" layoutY="68.0" text="null" AnchorPane.topAnchor="20.0" />
-      <Label layoutX="992.0" layoutY="356.0" text="Port" AnchorPane.rightAnchor="50.0" />
-      <Label fx:id="txtPort3" layoutX="480.0" layoutY="68.0" text="null" AnchorPane.topAnchor="20.0" />
-      <Button fx:id="btnStart" layoutX="999.0" layoutY="470.0" mnemonicParsing="false" onAction="#btnStart" text="Sẵn sàng" AnchorPane.rightAnchor="20.0" />
+
+             <javafx.scene.image.ImageView fitHeight="815.0" fitWidth="1158.0" preserveRatio="false" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <javafx.scene.image.Image url="@../img/nen.jpg" /> <!-- Đường dẫn đến hình ảnh -->
+         </image>
+      </javafx.scene.image.ImageView>
+
+      <Label layoutX="288.0" layoutY="474.0" text="Vị trí : " textFill="#f2eeee" />
+      <Label fx:id="txtPosition1" layoutX="332.0" layoutY="474.0" text="null" textFill="#faf2f2" />
+      <Label layoutX="449.0" layoutY="474.0" text="Username" textFill="#faf5f5" />
+      <Label fx:id="txtPort1" layoutX="522.0" layoutY="474.0" text="null" textFill="#faf4f4" />
+      <Label layoutX="288.0" layoutY="68.0" text="Vị trí : " textFill="#f4f1f1" AnchorPane.topAnchor="20.0" />
+      <Label fx:id="txtPosition2" layoutX="1042.0" layoutY="131.0" text="null" textFill="#f7f2f2" AnchorPane.rightAnchor="83.59999999999991" />
+      <Label layoutX="449.0" layoutY="68.0" text="Username" textFill="#eae6e6" AnchorPane.topAnchor="20.0" />
+      <Label fx:id="txtPort2" layoutX="1042.0" layoutY="356.0" text="null" textFill="#f7f2f2" AnchorPane.rightAnchor="83.59999999999991" />
+      <Label layoutX="34.0" layoutY="113.0" text="Vị trí : " textFill="#ece9e9" AnchorPane.leftAnchor="20.0" />
+      <Label fx:id="txtPosition4" layoutX="78.0" layoutY="113.0" text="null" textFill="#ece9e9" AnchorPane.leftAnchor="60.0" />
+      <Label layoutX="27.0" layoutY="338.0" text="Username" textFill="#ece9e9" AnchorPane.leftAnchor="20.0" />
+      <Label fx:id="txtPort4" layoutX="80.0" layoutY="338.0" text="null" textFill="#ece9e9" AnchorPane.leftAnchor="80.0" />
+      <Label layoutX="997.0" layoutY="131.0" text="Vị trí : " textFill="#f7f2f2" AnchorPane.rightAnchor="114.19999999999982" />
+      <Label fx:id="txtPosition3" layoutX="332.0" layoutY="68.0" text="null" textFill="#eae6e6" AnchorPane.topAnchor="20.0" />
+      <Label layoutX="978.0" layoutY="356.0" text="Username" textFill="#f7f2f2" AnchorPane.rightAnchor="114.0" />
+      <Label fx:id="txtPort3" layoutX="512.0" layoutY="20.0" text="null" textFill="#eae6e6" AnchorPane.topAnchor="20.0" />
+      <Button fx:id="btnStart" layoutX="1010.0" layoutY="470.0" mnemonicParsing="false" onAction="#btnStart" text="Sẵn sàng" AnchorPane.rightAnchor="71.59999999999991" />
       <Label fx:id="txtCards" layoutX="37.0" layoutY="531.0" prefHeight="49.0" prefWidth="836.0" />
-      <HBox fx:id="containerCards" layoutX="1.0" layoutY="521.0" prefHeight="300.0" prefWidth="1079.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+      <HBox fx:id="containerCards" layoutX="1.0" layoutY="523.0" prefHeight="298.0" prefWidth="1105.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
       <Button fx:id="btnDanh" layoutX="722.0" layoutY="470.0" mnemonicParsing="false" onAction="#btnDanh" prefHeight="26.0" prefWidth="64.0" text="Đánh" />
       <AnchorPane fx:id="containerHandInRoom" layoutX="332.0" layoutY="149.0" prefHeight="200.0" prefWidth="200.0" />
       <Button fx:id="btnSkip" layoutX="643.0" layoutY="471.0" mnemonicParsing="false" onAction="#btnSkip" text="Bỏ lượt" />

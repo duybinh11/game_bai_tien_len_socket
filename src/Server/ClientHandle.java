@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import DTO.RoomDTO;
+import Database.DaoUser;
+
 import java.util.Date;
 import java.io.Serializable;
 import Model.ActionBroadcast;
@@ -17,15 +19,19 @@ import Model.Card;
 import Model.ClientData;
 import Model.Deck;
 import Model.Room;
+import Model.User;
+import javafx.application.Platform;
 
 public class ClientHandle extends Thread implements Serializable {
     private Socket socket;
+    public User user;
     private ObjectOutputStream writeObject;
     private ObjectInputStream readObject;
     private Integer postionRoom = null;
     private boolean isSkip = false;
     private boolean isStart = false;
     private Date time;
+    private DaoUser daoUser = new DaoUser();
 
     public ClientHandle(Socket socket) throws IOException {
         this.socket = socket;
@@ -33,7 +39,7 @@ public class ClientHandle extends Thread implements Serializable {
         readObject = new ObjectInputStream(socket.getInputStream());
         writeObject = new ObjectOutputStream(socket.getOutputStream());
         this.time = new Date();
-        broadcastListRoom();
+
     }
 
     @Override
@@ -43,12 +49,13 @@ public class ClientHandle extends Thread implements Serializable {
                 ActionBroadcast actionBroadcast = (ActionBroadcast) readObject.readObject();
                 System.out.println("action server get : " + actionBroadcast);
                 // + 2 -> tạo phòng
+
                 if (actionBroadcast.getCode() == 2) {
                     String name = (String) actionBroadcast.getData();
                     Room room = Server.createRoom(this, name);
                     RoomDTO RoomDTO = room.toRoomDTO();
                     ActionBroadcast<RoomDTO> actionNewRoom = new ActionBroadcast<RoomDTO>(3, RoomDTO);
-                    Server.broadCastAllClients(this, actionNewRoom);
+                    Server.broadCastAllClients(actionNewRoom);
 
                     ClientData clientData = getClientData();
                     Map<String, Object> mapData = Map.of(
@@ -58,9 +65,13 @@ public class ClientHandle extends Thread implements Serializable {
                             mapData);
 
                     broadcastThisClient(actionEnterRoom);
+                    Server.refreshDataServer();
+                } else if (actionBroadcast.getCode() == 0) {
+                    Server.removeClient(this);
                 }
                 // 5 -> yêu cầu tham gia vào phòng
                 else if (actionBroadcast.getCode() == 5) {
+
                     int idRoom = actionBroadcast.getIdRoom();
                     Room room = Server.getRoomById(idRoom);
                     room.addClient(this);
@@ -77,6 +88,13 @@ public class ClientHandle extends Thread implements Serializable {
                             6,
                             mapData);
                     broadcastClientAllinRoom(room.getListClient(), actionOAllInClient);
+                    Server.refreshDataServer();
+
+                    List<RoomDTO> roomsDto = Server.rooms.stream().map(room1 -> {
+                        return room.toRoomDTO();
+                    }).toList();
+
+                    sendBroadcastDataNewRoomToAllClient(roomsDto);
 
                 }
                 // + set isStart cho client do va check xem tat ca cac client da sang ht ch
@@ -146,6 +164,51 @@ public class ClientHandle extends Thread implements Serializable {
                     room.setPostionStartHand(postionRoom);
                     resetDataClient(room.getListClient());
 
+                }
+                // handle login
+                else if (actionBroadcast.getCode() == 20) {
+                    User user = (User) actionBroadcast.getData();
+                    boolean check = daoUser.checkUserCredentials(user);
+                    if (check) {
+                        this.user = user;
+                        Server.addClients(this);
+                    } else {
+                        user = null;
+                    }
+                    ActionBroadcast actionResultLogin = new ActionBroadcast<User>(21, user);
+                    broadcastThisClient(actionResultLogin);
+                    // gui danh sach room sau khi login thanh cong
+                    broadcastListRoom();
+                }
+
+                else if (actionBroadcast.getCode() == 22) {
+                    User user = (User) actionBroadcast.getData();
+                    boolean check = daoUser.insert(user);
+                    ActionBroadcast actionResultLogin = new ActionBroadcast<Boolean>(23, check);
+                    broadcastThisClient(actionResultLogin);
+                }
+
+                else if (actionBroadcast.getCode() == 30) {
+                    int idRoom = actionBroadcast.getIdRoom();
+                    Room room = Server.getRoomById(idRoom);
+
+                    if (room.getCountMember() > 1) {
+                        room.removeClient(this);
+                        room.addPostionAvaiable(postionRoom);
+                        List<ClientHandle> clientHandles = room.getListClient();
+                        ActionBroadcast actionClientExitRoom = new ActionBroadcast<>(31, postionRoom);
+                        broadcastClientInRoom(clientHandles, actionClientExitRoom);
+                    } else {
+                        Server.removeRoom(room);
+                    }
+                    postionRoom = null;
+                    Server.refreshDataServer();
+
+                    List<RoomDTO> roomsDto = Server.rooms.stream().map(room1 -> {
+                        return room.toRoomDTO();
+                    }).toList();
+
+                    sendBroadcastDataNewRoomToAllClient(roomsDto);
                 }
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
@@ -279,8 +342,14 @@ public class ClientHandle extends Thread implements Serializable {
 
     }
 
+    public void sendBroadcastDataNewRoomToAllClient(List<RoomDTO> roomDTOs) {
+        ActionBroadcast<List<RoomDTO>> actionRefreshListRoomToAllClient = new ActionBroadcast<List<RoomDTO>>(
+                41, roomDTOs);
+        Server.broadCastAllClients(actionRefreshListRoomToAllClient);
+    }
+
     public ClientData getClientData() {
-        return new ClientData(socket.getLocalAddress().toString(), socket.getPort(), postionRoom);
+        return new ClientData(socket.getLocalAddress().toString(), socket.getPort(), postionRoom, this.user);
     }
 
     public Integer getPostionRoom() {

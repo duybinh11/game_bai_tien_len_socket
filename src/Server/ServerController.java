@@ -1,9 +1,11 @@
 package Server;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import Model.Room;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -30,7 +32,7 @@ public class ServerController {
     private TableColumn<Room, String> clListPorts;
 
     @FXML
-    private TableColumn<ClientHandle, Integer> clPort;
+    private TableColumn<ClientHandle, String> clPort;
 
     @FXML
     private TableColumn<ClientHandle, Date> clTime;
@@ -52,7 +54,7 @@ public class ServerController {
         tblRoom.setItems(listRoom);
 
         clPort.setCellValueFactory(
-                cellData -> new SimpleObjectProperty<>(cellData.getValue().getSocket().getPort()));
+                cellData -> new SimpleObjectProperty<>(cellData.getValue().user.getUsername()));
         clmStatus.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().getPostionRoom() == null ? "chưa" : "rồi"));
 
@@ -67,7 +69,7 @@ public class ServerController {
         clListPorts.setCellValueFactory(cellData -> {
             Room room = cellData.getValue();
             String ports = room.getListClient().stream()
-                    .map(clientHandle -> String.valueOf(clientHandle.getSocket().getPort()))
+                    .map(clientHandle -> String.valueOf(clientHandle.user.getUsername()))
                     .collect(Collectors.joining(", "));
             return new SimpleStringProperty(ports);
         });
@@ -81,6 +83,14 @@ public class ServerController {
     public void updateListRoom(Room room) {
         listRoom.add(room);
         System.out.println("controller " + listRoom);
+    }
+    
+
+    public void refreshTable(List<ClientHandle> listClientHandleTemp, List<Room> listRoomTemp) {
+        listClients.clear();
+        listClients.addAll(listClientHandleTemp);
+        listRoom.clear();
+        listRoom.addAll(listRoomTemp);
     }
 
 }

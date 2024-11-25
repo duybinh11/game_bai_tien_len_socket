@@ -2,6 +2,7 @@ package Model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DTO.RoomDTO;
@@ -34,10 +35,26 @@ public class Room implements Serializable {
 
     }
 
+    public int getCountMember() {
+        return listClient.size();
+    }
+
+    public void removeClient(ClientHandle clientHandle) {
+        listClient.removeIf(item -> {
+            return item.equals(clientHandle);
+        });
+
+    }
+
     private int getPostion() {
         int index = listPostionAvaiable.get(0);
         listPostionAvaiable.remove(0);
         return index;
+    }
+
+    public void addPostionAvaiable(int position) {
+        listPostionAvaiable.add(position);
+        Collections.sort(listPostionAvaiable);
     }
 
     public int getId() {

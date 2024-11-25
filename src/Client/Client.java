@@ -9,7 +9,7 @@ import Interface.ClickClientEvent;
 import Model.ActionBroadcast;
 import Model.Card;
 import Model.ClientData;
-import Model.Room;
+import Model.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -19,8 +19,7 @@ import javafx.stage.Stage;
 import java.util.*;
 
 import DTO.RoomDTO;
-import Enum.Rank;
-import Enum.Suit;;
+import Database.DaoUser;
 
 public class Client extends Application implements ClickClientEvent {
     private final int PORT = 12345;
@@ -30,27 +29,30 @@ public class Client extends Application implements ClickClientEvent {
     private List<RoomDTO> roomDTOs = new ArrayList<>();
     private ClientController controllerHome;
     private ClientRoomController controllerRoom;
+    private ClientLoginController controllerLogin;
+    private ClientCreateController controllerCreate;
     private Stage primaryStage;
     private Scene homeScene;
     private Socket socket;
     private RoomDTO roomJoining;
     private List<Card> cardOfClientOther = new ArrayList<>();
     private List<Card> cardOfClientThis = new ArrayList<>();
+    private User user;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
+        initViewLogin();
+        // Bắt sự kiện khi người dùng nhấn nút X
+        primaryStage.setOnCloseRequest(event -> {
+            ActionBroadcast actionEndgame = new ActionBroadcast<>(0);
+            try {
+                writeObject.writeObject(actionEndgame);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("ViewHome.fxml"));
-        Parent root = loader.load();
-        controllerHome = loader.getController();
-
-        homeScene = new Scene(root, 800, 800);
-        controllerHome.setInterfaceClick(this);
-
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(homeScene); // Sử dụng homeScene
-        primaryStage.show();
         new Thread(() -> {
             try {
                 socket = new Socket(HOST, PORT);
@@ -60,6 +62,7 @@ public class Client extends Application implements ClickClientEvent {
 
                 while (true) {
                     try {
+                        // send actionn khi bat dau
                         @SuppressWarnings("rawtypes")
                         ActionBroadcast actionBroadcast = (ActionBroadcast) readObject.readObject();
                         System.out.println("action client get : " + actionBroadcast);
@@ -84,7 +87,7 @@ public class Client extends Application implements ClickClientEvent {
                             System.out.println(roomJoining);
                             ClientData clientData = (ClientData) mapData.get("clientData");
                             Platform.runLater(() -> {
-                                nextView(() -> {
+                                nextViewRoom(() -> {
                                     updateAfterCreateRoom(clientData);
                                     controllerRoom.inVisibleBtnStart();
                                 });
@@ -102,8 +105,7 @@ public class Client extends Application implements ClickClientEvent {
                             ClientData clientCurrent = findClientDataCurrent(clientDatas);
                             System.out.println(roomJoining);
                             Platform.runLater(() -> {
-                                nextView(() -> {
-
+                                nextViewRoom(() -> {
                                     updateClientInRoom(clientCurrent, clientDatas);
                                 });
                             });
@@ -174,6 +176,58 @@ public class Client extends Application implements ClickClientEvent {
                                 controllerRoom.setFalseIsStart();
                             });
                         }
+                        // nhan ket qua cua login
+                        else if (actionBroadcast.getCode() == 21) {
+                            User userResult = (User) actionBroadcast.getData();
+                            if (userResult != null) {
+                                user = userResult;
+                            }
+                            Platform.runLater(() -> {
+                                if (userResult != null) {
+                                    System.out.println("login thanh cong");
+                                    nextViewHome();
+                                } else {
+                                    controllerLogin.setNotification("tai khoan dang nhap khong dung");
+                                    System.out.println("login that bai");
+                                }
+                            });
+                        }
+
+                        // nhan ket qua cua dang ky
+                        else if (actionBroadcast.getCode() == 23) {
+                            boolean check = (boolean) actionBroadcast.getData();
+                            Platform.runLater(() -> {
+                                if (check) {
+                                    System.out.println("dang ky thanh cong");
+                                    controllerCreate.setNotification("dang ky thanh cong");
+                                } else {
+                                    System.out.println("dang ky  that bai");
+                                    controllerCreate.setNotification("dang ky  that bai");
+                                }
+                            });
+                        }
+                        // nhan vi tri cua client da thoat phong
+                        else if (actionBroadcast.getCode() == 31) {
+                            int position = (int) actionBroadcast.getData();
+                            Platform.runLater(() -> {
+                                if (position == 1) {
+                                    controllerRoom.setPostion1Empty();
+                                } else if (position == 2) {
+                                    controllerRoom.setPostion2Empty();
+                                } else if (position == 3) {
+                                    controllerRoom.setPostion3Empty();
+                                } else {
+                                    controllerRoom.setPostion4Empty();
+                                }
+
+                            });
+                        }
+
+                        // cap nhat thong tin moi nhat cua thong tin list room
+                        else if (actionBroadcast.getCode() == 41) {
+                            List<RoomDTO> roomDTOs = (List<RoomDTO>) actionBroadcast.getData();
+                            setRoomsUiAll(roomDTOs);
+                        }
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -205,6 +259,13 @@ public class Client extends Application implements ClickClientEvent {
         });
     }
 
+    public void setRoomsUiAll(List<RoomDTO> newRooms) {
+        this.roomDTOs = newRooms;
+        Platform.runLater(() -> {
+            controllerHome.updateRooms(roomDTOs);
+        });
+    }
+
     // ui room
 
     public void updateAfterCreateRoom(ClientData clientData) {
@@ -224,7 +285,7 @@ public class Client extends Application implements ClickClientEvent {
         }
     }
 
-    public void nextView(Runnable onComplete) {
+    public void nextViewRoom(Runnable onComplete) {
         try {
             FXMLLoader loaderRoom = new FXMLLoader(getClass().getResource("ViewRoom.fxml"));
             Parent rootRoom = loaderRoom.load();
@@ -248,6 +309,15 @@ public class Client extends Application implements ClickClientEvent {
     public void clickExit() {
         primaryStage.setScene(homeScene);
         primaryStage.setFullScreen(false);
+
+        ActionBroadcast actionExitRoom = new ActionBroadcast<>(30, roomJoining.getId());
+        try {
+            writeObject.writeObject(actionExitRoom);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        roomJoining = null;
     }
 
     @Override
@@ -416,11 +486,98 @@ public class Client extends Application implements ClickClientEvent {
         return true;
     }
 
+    public void nextViewHome() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ViewHome.fxml"));
+            Parent root = loader.load(); // Gọi load() trước khi lấy controller
+
+            controllerHome = loader.getController();
+
+            if (controllerHome != null) {
+                controllerHome.setInterfaceClick(this);
+                System.out.println(user);
+                controllerHome.setUsername(user.getUsername());
+            } else {
+                System.out.println("Controller is null");
+            }
+
+            homeScene = new Scene(root);
+            primaryStage.setScene(homeScene);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void clickSkip() {
         ActionBroadcast actionSkip = new ActionBroadcast<>(14, roomJoining.getId());
         try {
             writeObject.writeObject(actionSkip);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void clickLogin(User user) {
+        ActionBroadcast<User> actionLogin = new ActionBroadcast<User>(20, user);
+        try {
+            writeObject.writeObject(actionLogin);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void nextViewCreate() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ViewCreate.fxml"));
+            Parent root = loader.load();
+
+            controllerCreate = loader.getController();
+
+            if (controllerCreate != null) {
+                controllerCreate.setInterfaceClick(this);
+            } else {
+                System.out.println("controllerCreate is null");
+            }
+
+            homeScene = new Scene(root);
+            primaryStage.setScene(homeScene);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void initViewLogin() throws IOException {
+        FXMLLoader loaderLogin = new FXMLLoader(getClass().getResource("ViewLogin.fxml"));
+        Parent rootLogin = loaderLogin.load();
+        controllerLogin = loaderLogin.getController();
+        homeScene = new Scene(rootLogin);
+        controllerLogin.setInterfaceClick(this);
+        primaryStage.setTitle("Hello World");
+        primaryStage.setScene(homeScene);
+        primaryStage.show();
+    }
+
+    @Override
+    public void clickCreateAccount(User user) {
+        System.out.println(1);
+        ActionBroadcast<User> actionLogin = new ActionBroadcast<User>(22, user);
+        try {
+            writeObject.writeObject(actionLogin);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void clickBackToLogin() {
+        try {
+            initViewLogin();
         } catch (IOException e) {
             e.printStackTrace();
         }
