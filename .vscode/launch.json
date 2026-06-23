@@ -8,31 +8,33 @@
             "type": "java",
             "name": "DatabaseConnection",
             "request": "launch",
-            "mainClass": "Database.DatabaseConnection",
-            "projectName": "tien_len_v2_2f3af84"
+            "mainClass": "Database.DatabaseConnection"
         },
         {
             "type": "java",
             "name": "Test",
             "request": "launch",
-            "mainClass": "Test",
-            "projectName": "tien_len_v2_2f3af84"
+            "mainClass": "Test"
         },
         {
             "type": "java",
             "name": "Client",
             "request": "launch",
             "mainClass": "Client.Client",
-            "projectName": "tien_len_v2_2f3af84",
-            "vmArgs": "--module-path \"D:/lib/javafx-sdk-22.0.2/lib\" --add-modules javafx.controls,javafx.fxml"
+            "env": {
+                "JAVA_HOME": "/Users/admin/Library/Java/JavaVirtualMachines/corretto-22.0.2/Contents/Home"
+            },
+            "vmArgs": "--module-path \"${workspaceFolder}/lib\" --add-modules javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
             "name": "Server",
             "request": "launch",
             "mainClass": "Server.Server",
-            "projectName": "tien_len_v2_2f3af84",
-            "vmArgs": "--module-path \"D:/lib/javafx-sdk-22.0.2/lib\" --add-modules javafx.controls,javafx.fxml"
+            "env": {
+                "JAVA_HOME": "/Users/admin/Library/Java/JavaVirtualMachines/corretto-22.0.2/Contents/Home"
+            },
+            "vmArgs": "--module-path \"${workspaceFolder}/lib\" --add-modules javafx.controls,javafx.fxml"
         },
         {
             "type": "node",
